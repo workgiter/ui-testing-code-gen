@@ -1,0 +1,11 @@
+{
+    "name": "Testing Code Gen",
+    "description": "An extension to generate testing code from the browser",
+    "version": "1.0",
+    "manifest_version": 3,
+    "devtools_page": "devtools.html",
+    "action": {
+      "default_popup": "popup.html",
+      "default_icon": "extension.png"
+    }
+  }
