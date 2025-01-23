@@ -53,30 +53,30 @@ function Locator(name, xpath): Locator {
 // q.s -> q.step.click() // create click action, then performs click action
 // q.code() // generates all code for performed actions
 
-function getElementsByXPath(xpath) {
-    return Array.from((function*(){ let iterator = document.evaluate(xpath, document, null, XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null); let current = iterator.iterateNext(); while(current){ yield current; current = iterator.iterateNext(); }  })());
-}
+// function getElementsByXPath(xpath) {
+//     return Array.from((function*(){ let iterator = document.evaluate(xpath, document, null, XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null); let current = iterator.iterateNext(); while(current){ yield current; current = iterator.iterateNext(); }  })());
+// }
 
 
-let genLocator = () => {
-	let el: HTMLElement = $0
-    let xpath = ""
-	if (el.id != '') {
-        xpath = `//${el.tagName}[@id='${el.id}']`
-	} else {
-		let CSSclass = el.getAttribute("class")
-        xpath = `//${el.tagName}[contains(concat('⦿', @class, '⦿'), '⦿${CSSclass}⦿')]`
-        if (getElementsByXPath(xpath).length > 1) {
-            xpath = xpath + `[.='${el.textContent}']`
-        }
-	}
-    q.currentLocator = Locator("Name", xpath)
-    console.log(xpath)
-}
+// let genLocator = () => {
+// 	let el: HTMLElement = $0
+//     let xpath = ""
+// 	if (el.id != '') {
+//         xpath = `//${el.tagName}[@id='${el.id}']`
+// 	} else {
+// 		let CSSclass = el.getAttribute("class")
+//         xpath = `//${el.tagName}[contains(concat('⦿', @class, '⦿'), '⦿${CSSclass}⦿')]`
+//         if (getElementsByXPath(xpath).length > 1) {
+//             xpath = xpath + `[.='${el.textContent}']`
+//         }
+// 	}
+//     q.currentLocator = Locator("Name", xpath)
+//     console.log(xpath)
+// }
 
-function onlyUnique(value, index, array) {
-    return array.indexOf(value) === index;
-  }
+// function onlyUnique(value, index, array) {
+//     return array.indexOf(value) === index;
+//   }
 
 let code = (actions: Action[]) => {
     let locatorCode = 

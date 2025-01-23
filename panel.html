@@ -1,17 +1,23 @@
 <html>
   <body>
-    <script src="panel.js"></script>
     <h1>Code Gen Extension</h1>
     <div>
+      <button id="genLocator">Fill Locator Data</button>
       <form>
-        <label for="name">name</label>
-        <input id="name" type="text">
-        <label for="xpath">xpath</label>
-        <input id="xpath" type="text">
+        <label for="input-name">name</label>
+        <input id="input-name" type="text" style="width: 100%;">
+        <label for="input-xpath">xpath</label>
+        <input id="input-xpath" type="text" style="width: 100%;">
       </form>
-      <button>Click</button>
-      <button>isDisplayed</button>
-      <button>VerifyText</button>
+      <button id="click">click</button>
+      <button id="isDisplayed">isDisplayed</button>
+      <button id="verifyText">verifyText</button>
+
+      <br/>
+      <textarea id="story" name="story" rows="5" cols="66">
+      code
+        </textarea>
     </div>
+    <script src="panel.js"></script>
   </body>
 </html>
