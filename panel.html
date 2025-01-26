@@ -3,7 +3,7 @@
     <h1>Code Gen Extension</h1>
     <div>
       <button id="genLocator">Fill Locator Data</button>
-      <form>
+
         <label for="input-name">name</label>
         <input id="input-name" type="text" style="width: 100%;">
         <label for="input-xpath">xpath</label>
@@ -12,6 +12,9 @@
         <input id="input-text" type="text" style="width: 100%;">
         <label for="input-index">index</label>
         <input id="input-index" type="index" style="width: 100%;">
+
+        <button id="check-locator">check-locator</button>
+        <div id="check-locator-text"></div>
         <div>
           <label for="noIndex">noIndex</label>
           <input type="radio" id="noIndex" name="index" value="noIndex" checked/>
@@ -22,7 +25,7 @@
           <label for="enum">Enum</label>
           <input type="radio" id="enum" name="index" value="enum" />
         </div>
-      </form>
+
 
       <div id="actions">
         <button id="click">click</button>

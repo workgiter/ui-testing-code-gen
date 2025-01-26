@@ -6,3 +6,7 @@ function getElementsByXPath(xpath) {
 
 
 
+chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
+    console.log(msg)
+    sendResponse(getElementsByXPath(msg.xpathString).length);
+});

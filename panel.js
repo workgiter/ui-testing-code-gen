@@ -3,6 +3,26 @@ function getElementsByXPath(xpath) {
     return Array.from((function*(){ let iterator = document.evaluate(xpath, document, null, XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null); let current = iterator.iterateNext(); while(current){ yield current; current = iterator.iterateNext(); }  })());
 }
 
+function numberOfXpathMatchers(xpath, el) {
+    getElementsByXPath2 = (xpath) => {
+        return Array.from((function*(){ let iterator = document.evaluate(xpath, document, null, XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null); let current = iterator.iterateNext(); while(current){ yield current; current = iterator.iterateNext(); }  })());
+    }
+    console.log(xpath)
+    let elements = getElementsByXPath2(xpath)
+
+    return {number: elements.length, match: el.isSameNode(elements[0])}
+
+}
+
+function enumValuesFind(xpath) {
+    getElementsByXPath2 = (xpath) => {
+        return Array.from((function*(){ let iterator = document.evaluate(xpath, document, null, XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null); let current = iterator.iterateNext(); while(current){ yield current; current = iterator.iterateNext(); }  })());
+    }
+
+    return getElementsByXPath2(xpath).map(x => x.textContent)
+
+}
+
 function genLocator(el) {
 
     getElementsByXPath2 = (xpath) => {
@@ -17,7 +37,7 @@ function genLocator(el) {
         name = el.id
 	} else if(el.getAttribute("class")) {
 		let CSSclass = el.getAttribute("class")
-        xpath = `//${el.tagName}[contains(concat('⦿', @class, '⦿'), '⦿${CSSclass}⦿')]`
+        xpath = `//${el.tagName}[contains(concat('_', @class, '_'), '_${CSSclass}_')]`
         name = CSSclass
         if (getElementsByXPath2(xpath).length > 1) {
             xpath = xpath
@@ -31,9 +51,9 @@ function genLocator(el) {
     let elementsFromXpath = getElementsByXPath2(xpath)
     let index = elementsFromXpath.findIndex(element => element.isSameNode(el))
     
-    console.log(name)
-    console.log(xpath)
-    console.log(text)
+    // console.log(name)
+    // console.log(xpath)
+    // console.log(text)
     return {
         name,
         xpath,
@@ -50,7 +70,7 @@ function clickGenLocator() {
             genLocator.toString() + "; \n" +
             "genLocator($0)", function(result) {
                 console.log(result);
-                document.getElementById("input-name").value = result.name;
+                document.getElementById("input-name").value = nameFilter(result.name);
                 document.getElementById("input-xpath").value = result.xpath;
                 document.getElementById("input-text").value = result.text;
                 document.getElementById("input-index").value = result.index;
@@ -75,6 +95,14 @@ function enumFilter(text) {
         .replace("\t", "")
         .replace(" ", "_")
         .toUpperCase()
+}
+
+function nameFilter(text) {
+    return text
+    .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"")
+    .replace("\n", "")
+    .replace("\t", "")
+    .replace(" ", "_")
 }
 
 function enumNameGen(locatorData) {
@@ -104,7 +132,7 @@ let actionTemplates = {
                 {
                     name: "elementText",
                     type: "String",
-                    value: locatorData.text
+                    value: `"${locatorData.text}"`
                 }
             ]
         }
@@ -115,24 +143,27 @@ let indexTemplates = {
     noIndex: function(locatorData) {
         return {
             xpath: "",
+            realXpath: "",
             atributes:[]
         }
     },
     string: function(locatorData) {
         return {
-            xpath: "[.='$elementText']",
+            xpath: "[.='${elementText}']",
+            realXpath: `[.='${locatorData.text}']`,
             atributes:[
                 {
                     name: "elementText",
                     type: "String",
-                    value: locatorData.text
+                    value: `"${locatorData.text}"`
                 }
             ]
         }
     },
     index: function(locatorData) {
         return {
-            xpath: "({REP})[.='${(index+1).toString()}']",
+            xpath: "({REP})[${(index+1).toString()}]",
+            realXpath: `({REP})[${Number(locatorData.index)+1}]`,
             atributes:[
                 {
                     name: "index",
@@ -145,6 +176,7 @@ let indexTemplates = {
     enum: function(locatorData) {
         return {
             xpath: "[.='${elementText.value}']",
+            realXpath: `[.='${locatorData.text}']`,
             atributes:[
                 {
                     name: "elementText",
@@ -228,18 +260,24 @@ function atributeNamesAndTypes(atributes) {
     return atributes.map(x => {return x.name + ": " + x.type}).join(", ") 
 }
 
-
-function genGet(step) {
-    let defAtributes = atributeNamesAndTypes(step.index.atributes)
-
+function genXpathString(step){
     let xpathString = ""
     if (step.index.xpath.includes("{REP}")) {
         xpathString = step.index.xpath.replace("{REP}", step.xpath)
     } else {
-        xpathString = `"${step.xpath}${step.index.xpath}`
+        xpathString = `${step.xpath}${step.index.xpath}`
     }
+    return xpathString
+}
+
+
+function genGet(step) {
+    let defAtributes = atributeNamesAndTypes(step.index.atributes)
+
+    let xpathString = genXpathString(step)
+
     return `get${step.name}(${defAtributes}): Web.WebInteraction<Void> {
-        return getWebElement(Sports, XPath, "${step.xpath}${step.index.xpath}")
+        return getWebElement(Sports, XPath, "${xpathString}")
     }`
 }
 
@@ -292,6 +330,38 @@ async function printTestCode() {
     document.getElementById("code").value = genCode(data.steps)
 }
 
+function genRealXpathString(step){
+    let xpathString = ""
+    if (step.index.xpath.includes("{REP}")) {
+        xpathString = step.index.realXpath.replace("{REP}", step.xpath)
+    } else {
+        xpathString = `${step.xpath}${step.index.realXpath}`
+    }
+    return xpathString
+}
+
+
+function checkLocator() {
+    let locatorData = getLocatorData()
+    let step = genStepTemplate(locatorData, locatorData.indexType, "click")
+
+    let xpathString = genRealXpathString(step)
+    // document.getElementById("check-locator-text").innerText = `${xpathString}`
+        
+
+    chrome.devtools.inspectedWindow.eval(
+        numberOfXpathMatchers.toString() + "; \n" +
+        `numberOfXpathMatchers("${xpathString}", $0)`, function(result) {
+            console.log(result);
+            document.getElementById("check-locator-text").innerText = 
+            `${result.match} ${result.number}: ${xpathString}`
+        }
+    )
+
+
+
+}
+
 
 
 
@@ -301,7 +371,7 @@ for (const [key, value] of Object.entries(actionTemplates)) {
     document.getElementById(key).addEventListener("click", () => addStep(key));
 }
 
-
+document.getElementById("check-locator").addEventListener("click", checkLocator)
 
 document.getElementById("genJson").addEventListener("click", genTestJson);
 document.getElementById("saveJson").addEventListener("click", saveTestJson);
