@@ -8,15 +8,37 @@
         <input id="input-name" type="text" style="width: 100%;">
         <label for="input-xpath">xpath</label>
         <input id="input-xpath" type="text" style="width: 100%;">
+        <label for="input-text">text</label>
+        <input id="input-text" type="text" style="width: 100%;">
+        <label for="input-index">index</label>
+        <input id="input-index" type="index" style="width: 100%;">
+        <div>
+          <label for="noIndex">noIndex</label>
+          <input type="radio" id="noIndex" name="index" value="noIndex" checked/>
+          <label for="string">String</label>
+          <input type="radio" id="string" name="index" value="string" />
+          <label for="index">index</label>
+          <input type="radio" id="index" name="index" value="index" />
+          <label for="enum">Enum</label>
+          <input type="radio" id="enum" name="index" value="enum" />
+        </div>
       </form>
-      <button id="click">click</button>
-      <button id="isDisplayed">isDisplayed</button>
-      <button id="verifyText">verifyText</button>
+
+      <div id="actions">
+        <button id="click">click</button>
+        <button id="isDisplayed">isDisplayed</button>
+        <button id="verifyText">verifyText</button>
+      </div>
 
       <br/>
-      <textarea id="story" name="story" rows="5" cols="66">
-      code
-        </textarea>
+      <button id="genJson">Gen Json</button>
+      <button id="saveJson">Save Json</button>
+      <br/>
+      <textarea id="story" name="story" rows="5" cols="66">[]</textarea>
+      <br/>
+      <button id="genTestCode">Gen Test Code</button>
+      <br/>
+      <textarea id="code" name="code" rows="5" cols="66">code</textarea>
     </div>
     <script src="panel.js"></script>
   </body>

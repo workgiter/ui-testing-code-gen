@@ -132,7 +132,7 @@ function genFunc(step) {
 function getCall(step) {
 
     let funcAtributes = atributeValues(step.index.atributes.concat(step.action.atributes))
-    return `${step.action.name}${step.name}()`
+    return `${step.action.name}${step.name}(${funcAtributes})`
 }
 
 

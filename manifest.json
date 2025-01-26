@@ -9,5 +9,8 @@
         "matches": ["<all_urls>"],
         "js": ["content-scripts.js"]
       }
+    ],
+    "permissions": [
+      "storage"
     ]
   }
